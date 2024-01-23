@@ -1,28 +1,24 @@
-           if (!(Test-Path -Path C:\ProgramData\WinGetPackages)) {
-                    New-Item -Path C:\ProgramData\WinGetPackages -Force -ItemType Directory
+#Set-Location C:\ProgramData\WinGetPackages
+
+if (!(Test-Path -Path C:\ProgramData\WinGetPackages)) {
+           New-Item -Path C:\ProgramData\WinGetPackages -Force -ItemType Directory
                 }
+#Downloading Packagefiles
+
+$ProgressPreference = 'SilentlyContinue'
+
+#Microsoft.UI.Xaml - newest
+Invoke-WebRequest -Uri "https://www.nuget.org/api/v2/package/Microsoft.UI.Xaml/" -OutFile "C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest.zip" -UseBasicParsing
+Expand-Archive -LiteralPath "C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest.zip" -DestinationPath "C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest" -Force
                 
-                #Set-Location C:\ProgramData\WinGetPackages
+#Microsoft.VCLibs.140.00.UWPDesktop
+Invoke-WebRequest -Uri "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" -OutFile "C:\ProgramData\WinGetPackages\Microsoft.VCLibs.x64.14.00.Desktop.appx" -UseBasicParsing
+ 
+#Winget
+Invoke-WebRequest -Uri "https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" -OutFile "C:\ProgramData\WinGetPackages\Winget.msixbundle" -UseBasicParsing
+$MicrosoftUIXamlVersion = Get-ChildItem C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest\tools\AppX\x64\Release -recurse | where {$_.name -like "Microsoft.UI.Xaml.*"} | select name
                 
-                #Downloading Packagefiles
-
-                $ProgressPreference = 'SilentlyContinue'
-                #Microsoft.UI.Xaml - newest
-
-                Invoke-WebRequest -Uri "https://www.nuget.org/api/v2/package/Microsoft.UI.Xaml/" -OutFile "C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest.zip" -UseBasicParsing
-
-                Expand-Archive -LiteralPath "C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest.zip" -DestinationPath "C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest" -Force
-                #Microsoft.VCLibs.140.00.UWPDesktop
-
-                Invoke-WebRequest -Uri "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" -OutFile "C:\ProgramData\WinGetPackages\Microsoft.VCLibs.x64.14.00.Desktop.appx" -UseBasicParsing
-                #Winget
-
-                Invoke-WebRequest -Uri "https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" -OutFile "C:\ProgramData\WinGetPackages\Winget.msixbundle" -UseBasicParsing
-
-                $MicrosoftUIXamlVersion = Get-ChildItem C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest\tools\AppX\x64\Release -recurse | where {$_.name -like "Microsoft.UI.Xaml.*"} | select name
-                #Installing dependencies + Winget
-
-                Add-ProvisionedAppxPackage -online -PackagePath:C:\ProgramData\WinGetPackages\Winget.msixbundle -DependencyPackagePath C:\ProgramData\WinGetPackages\Microsoft.VCLibs.x64.14.00.Desktop.appx,C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest\tools\AppX\x64\Release\$($MicrosoftUIXamlVersion.name) -SkipLicense
+#Installing dependencies + Winget
+Add-ProvisionedAppxPackage -online -PackagePath:C:\ProgramData\WinGetPackages\Winget.msixbundle -DependencyPackagePath C:\ProgramData\WinGetPackages\Microsoft.VCLibs.x64.14.00.Desktop.appx,C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest\tools\AppX\x64\Release\$($MicrosoftUIXamlVersion.name) -SkipLicense
                 
-
-                Start-Sleep 2
+Start-Sleep 2
