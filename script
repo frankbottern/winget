@@ -24,3 +24,5 @@
 
                 Add-ProvisionedAppxPackage -online -PackagePath:C:\ProgramData\WinGetPackages\Winget.msixbundle -DependencyPackagePath C:\ProgramData\WinGetPackages\Microsoft.VCLibs.x64.14.00.Desktop.appx,C:\ProgramData\WinGetPackages\microsoft.ui.xaml.newest\tools\AppX\x64\Release\$($MicrosoftUIXamlVersion.name) -SkipLicense
                 
+
+                Start-Sleep 2
